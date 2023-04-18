@@ -13,14 +13,8 @@ set tabstop=2        " tab width is 4 spaces
 set shiftwidth=2     " indent also with 4 spaces
 set expandtab        " expand tabs to spaces
 " wrap lines at 120 chars. 80 is somewaht antiquated with nowadays displays.
-" set textwidth=120
+"set textwidth=120
 set wrap
-" turn syntax highlighting on
-" set t_Co=256
-" syntax on
-colorscheme wombat256
-set cursorline " Highlights current line
-hi CursorLine term=bold cterm=bold guibg=Grey40
 
 " turn line numbers on
 set number
@@ -39,10 +33,29 @@ set tags+=~/.vim/tags/qt4
 set mouse=a "Activates the mouse, in all modes (note you will then have to press "shift" to make the copy-paste selections in the editor)
 set backspace=indent,eol,start
 
-
+" highlight TODO, FIXME
+syn match   myTodo   contained   "\<\(TODO\|FIXME\):"
+hi def link myTodo Todo
 
 " to fix the garbage print on startup
 "set t_RB= t_RF= t_RV= t_u7=
+
+" Use a line cursor within insert mode and a block cursor everywhere else.
+"
+" Using iTerm2? Go-to preferences / profile / colors and disable the smart bar
+" cursor color. Then pick a cursor and highlight color that matches your theme.
+" That will ensure your cursor is always visible within insert mode.
+"
+" Reference chart of values:
+"   Ps = 0  -> blinking block.
+"   Ps = 1  -> blinking block (default).
+"   Ps = 2  -> steady block.
+"   Ps = 3  -> blinking underline.
+"   Ps = 4  -> steady underline.
+"   Ps = 5  -> blinking bar (xterm).
+"   Ps = 6  -> steady bar (xterm).
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
 
 " Plugins
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
@@ -51,6 +64,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 call plug#begin('~/.vim/plugged')
+Plug 'joshdick/onedark.vim'
 Plug 'mhinz/vim-startify'
 Plug 'preservim/nerdtree'
 Plug 'majutsushi/tagbar'
@@ -59,20 +73,31 @@ Plug 'itchyny/vim-gitbranch'
 Plug 'itchyny/lightline.vim'
 Plug 'frazrepo/vim-rainbow'
 Plug 'airblade/vim-gitgutter'
-Plug 'dense-analysis/ale'
-Plug 'tabnine/YouCompleteMe'
+"Plug 'dense-analysis/ale'
+"Plug 'tabnine/YouCompleteMe'
 call plug#end()
+
+" turn syntax highlighting on
+" set t_Co=256
+syntax on
+if has("termguicolors")
+    set termguicolors
+endif
+set background=dark
+colorscheme onedark
+set cursorline " Highlights current line
+"hi CursorLine term=bold cterm=bold guibg=Grey40
 
 set laststatus=2
 set updatetime=500
 
 " YouCompleteMe
-let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/.ycm_extra_conf.py'
-let g:ycm_confirm_extra_conf=0
-let g:ycm_python_binary_path='/usr/bin/python3'
+"let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/.ycm_extra_conf.py'
+"let g:ycm_confirm_extra_conf=0
+"let g:ycm_python_binary_path='/usr/bin/python3'
 
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'onedark',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
@@ -207,6 +232,9 @@ map <F7> :make<CR>
 map <S-F7> :make clean all<CR>
 " goto definition with F12
 map <F12> <C-]>
+
+"copy to clipboard
+map <C-C> "+y
 
 set relativenumber
 set path=$PWD/** " Searchs for the line recursively
